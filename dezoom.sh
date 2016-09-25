@@ -9,7 +9,7 @@ export TMPDIR=$(mktemp --directory)
 filelist=""
 for y in $(seq $height_in_tiles)
 do
-  echo -ne "Downloading... $((100*$y/$height_in_tiles))    \r"
+  echo -ne "Downloading... $((100*$y/$height_in_tiles))%    \r"
   for x in $(seq $width_in_tiles)
   do
     url=$(echo $url_template | sed "s/%X/$x/" | sed "s/%Y/$y/")
@@ -30,3 +30,7 @@ do
   convert "$f" miff:-
   let i=$i+1
 done | montage - -geometry +0+0 -tile "$width_in_tiles"x"$height_in_tiles" result.jpg
+
+echo "Tiles successfully assembled in 'result.jpg'"
+
+rm -rf "$TMPDIR"
