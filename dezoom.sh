@@ -4,7 +4,7 @@ width_in_tiles=$1
 height_in_tiles=$2
 url_template=$3
 
-export TMPDIR=$(mktemp --directory)
+export TMPDIR=$(mktemp -d)
 
 filelist=""
 for y in $(seq $height_in_tiles)
