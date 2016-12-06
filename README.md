@@ -48,5 +48,5 @@ For instance, if the last tile loaded is `http://example.com/tile.php?tilePositi
 then you invoke the script like that:
 
 ```bash
-./dezoom.sh 189 105 "http://example.com/tile.php?tilePositionX=%X&tilePositionY=%Y"
+./dezoom.sh 188 105 "http://example.com/tile.php?tilePositionX=%X&tilePositionY=%Y"
 ```
