@@ -16,7 +16,7 @@ Install [brew](http://brew.sh/)
 brew install imagemagick
 brew install wget
 ```
-### In windows
+#### In windows
 Install [cygwin](https://cygwin.com/install.html), and inside it, install wget and [imagemagick](http://www.imagemagick.org/script/binary-releases.php).
 
 
