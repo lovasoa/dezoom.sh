@@ -20,7 +20,7 @@ export TMPDIR=$(mktemp -d)
 function download_file {
   outfile=$1
   url=$2
-  wget -O "$outfile" "$url" 2>/dev/null
+  wget --timeout 10 -O "$outfile" "$url" 2>/dev/null
   if [[ $(file "$outfile") != *"image"* ]]
   then
     rm -f "$outfile"
