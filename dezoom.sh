@@ -17,6 +17,19 @@ url_template=$3
 
 export TMPDIR=$(mktemp -d)
 
+function download_file {
+  outfile=$1
+  url=$2
+  wget -O "$outfile" "$url" 2>/dev/null
+  if [[ $(file "$outfile") != *"image"* ]]
+  then
+    rm -f "$outfile"
+    echo "Failed to download '$url'"
+  else
+    identify -format "%wx%h\n" "$outfile" >> "$TMPDIR/tilesizes.txt"
+  fi
+}
+
 filelist=""
 for y in $(seq $height_in_tiles)
 do
@@ -26,7 +39,7 @@ do
     url=$(echo $url_template | sed "s/%X/$x/" | sed "s/%Y/$y/")
 
     outfile="$TMPDIR"/tile"$x"_"$y".jpg
-    wget -O "$outfile" "$url" 2>/dev/null &
+    download_file "$outfile" "$url" &
     filelist="$filelist $outfile"
   done
   wait
@@ -34,11 +47,17 @@ done
 
 echo -e "\nTiles added."
 
+tilesize=$(head -n 1 "$TMPDIR/tilesizes.txt")
 i=0
 for f in $filelist
 do
   echo -ne "Assembling tiles: $((100*i/($width_in_tiles*$height_in_tiles)))%   \r" > /dev/stderr
-  convert "$f" miff:-
+  if [ -e "$f" ]
+  then
+    convert "$f" miff:-
+  else
+    convert -size "$tilesize" xc:black miff:-
+  fi
   let i=$i+1
 done | montage - -geometry +0+0 -tile "$width_in_tiles"x"$height_in_tiles" result.jpg
 
