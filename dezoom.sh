@@ -1,5 +1,16 @@
 #!/bin/bash
 
+if [ $# -ne 3 ]
+then
+  echo "$0: invalid number of arguments
+
+  Usage: $0 width height URL
+    width: width of the full image in number of tiles
+    height: height of the full image in number of tiles
+    URL: the URL of individual tiles, with the x position replaced by %X and the y position replaced by %Y";
+  exit 1;
+fi
+
 width_in_tiles=$1
 height_in_tiles=$2
 url_template=$3
