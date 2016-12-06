@@ -25,13 +25,13 @@ function download_file {
   retried=$3
 
   wget --timeout 10 -O "$outfile" "$url" 2>/dev/null
-  tilesize=$(identify -format "%wx%h" "$outfile")
+  tilesize=$(identify -format "%wx%h" "$outfile" 2> /dev/null)
   if [ $tilesize ]
   then
     echo $tilesize > "$TMPDIR/tilesize.txt"
   else
     rm -f "$outfile"
-    echo "Failed to download '$url'"
+    echo "Failed to download '$url'" >&2
     if [ ! $retried ]
     then
       sleep 1
@@ -43,7 +43,7 @@ function download_file {
 filelist=""
 for y in $(seq 0 $max_y)
 do
-  echo -ne "Downloading... $((100*$y/$height_in_tiles))%    \r"
+  echo -ne "Downloading... $((100*$y/$height_in_tiles))%    \r" >&2
   for x in $(seq 0 $max_x)
   do
     url=$(echo $url_template | sed "s/%X/$x/" | sed "s/%Y/$y/")
@@ -55,22 +55,20 @@ do
   wait
 done
 
-echo -e "\nTiles added."
-
 tilesize=$(< "$TMPDIR/tilesize.txt")
 i=0
 for f in $filelist
 do
-  echo -ne "Assembling tiles: $((100*i/($width_in_tiles*$height_in_tiles)))%   \r" > /dev/stderr
-  if [ -e "$f" ]
+  echo -ne "Assembling tiles: $((100*i/($width_in_tiles*$height_in_tiles)))%   \r" >&2
+  convert "$f" miff:- 2>/dev/null
+  if [ $? != 0 ]
   then
-    convert "$f" miff:-
-  else
+    # If the image could not be read, then generate a black tile instead
     convert -size "$tilesize" xc:black miff:-
   fi
   let i=$i+1
 done | montage - -geometry +0+0 -tile "$width_in_tiles"x"$height_in_tiles" result.jpg
 
-echo "Tiles successfully assembled in 'result.jpg'"
+echo "Tiles successfully assembled in 'result.jpg'" >&2
 
 rm -rf "$TMPDIR"
