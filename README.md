@@ -23,7 +23,7 @@ Install [cygwin](https://cygwin.com/install.html), and inside it, install wget a
 ### Download the script
 
 ```
-wget "https://raw.githubusercontent.com/lovasoa/dezoom.sh/master/dezoom.sh"
+wget -O dezoom.sh "https://raw.githubusercontent.com/lovasoa/dezoom.sh/master/dezoom.sh"
 ```
 
 ### Make it executable
