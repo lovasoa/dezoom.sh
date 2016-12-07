@@ -11,7 +11,8 @@ Download and assemble tiled images. Dezoomify for bash. Depends on imagemagick
 sudo apt install wget imagemagick
 ```
 #### In MacOS
-Install [brew](http://brew.sh/)
+First install [brew](http://brew.sh/), then you can install the dependencies:
+
 ```bash
 brew install imagemagick
 brew install wget
@@ -21,10 +22,13 @@ Install [cygwin](https://cygwin.com/install.html), and inside it, install wget a
 
 
 ### Download the script
+You can use wget to download the script itself from the command-line:
 
 ```
 wget -O dezoom.sh "https://raw.githubusercontent.com/lovasoa/dezoom.sh/master/dezoom.sh"
 ```
+
+Or you can download it manually from your browser https://raw.githubusercontent.com/lovasoa/dezoom.sh/master/dezoom.sh.
 
 ### Make it executable
 ```
