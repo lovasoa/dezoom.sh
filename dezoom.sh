@@ -17,30 +17,35 @@ url_template=$3
 width_in_tiles=$(( $max_x + 1 ))
 height_in_tiles=$(( $max_y + 1 ))
 
-export TMPDIR=$(mktemp -d)
+imgid=$(echo -n "$url_template" | tr -c "[:alnum:]" "-")
+export TMPDIR="$(dirname $(mktemp -u))/$imgid"
+mkdir -p "$TMPDIR"
+rm -f "$TMPDIR/failed_tiles.txt"
 
 function download_file {
   outfile=$1
   url=$2
   retried=$3
 
-  wget --timeout 10 -O "$outfile" "$url" 2>/dev/null
+  wget --timeout 20 -O "$outfile" "$url" 2>/dev/null
   tilesize=$(identify -format "%wx%h" "$outfile" 2> /dev/null)
   if [ $tilesize ]
   then
-    echo $tilesize > "$TMPDIR/tilesize.txt"
+    echo $tilesize >> "$TMPDIR/tilesize.txt"
   else
     rm -f "$outfile"
     echo "Failed to download '$url'" >&2
     if [ ! $retried ]
     then
-      sleep 1
+      sleep 5
       download_file $outfile $url true
+    else
+      echo "$url" >> "$TMPDIR/failed_tiles.txt"
     fi
   fi
 }
 
-filelist=""
+filelist=''
 for y in $(seq 0 $max_y)
 do
   echo -ne "Downloading... $((100*$y/$height_in_tiles))%    \r" >&2
@@ -49,13 +54,22 @@ do
     url=$(echo $url_template | sed "s/%X/$x/" | sed "s/%Y/$y/")
 
     outfile="$TMPDIR"/tile"$x"_"$y".jpg
-    download_file "$outfile" "$url" &
+    if [ ! -e "$outfile" ]
+    then
+      download_file "$outfile" "$url" &
+    fi
     filelist="$filelist $outfile"
   done
   wait
 done
 
-tilesize=$(< "$TMPDIR/tilesize.txt")
+if [ ! -e "$TMPDIR/tilesize.txt" ]
+then
+  echo "Didn't manage to download any tile." >&2
+  exit 1
+fi
+
+tilesize=$(head -n 1 "$TMPDIR/tilesize.txt")
 i=0
 for f in $filelist
 do
@@ -71,4 +85,9 @@ done | montage - -geometry +0+0 -tile "$width_in_tiles"x"$height_in_tiles" resul
 
 echo "Tiles successfully assembled in 'result.jpg'" >&2
 
-rm -rf "$TMPDIR"
+if [ -e "$TMPDIR/failed_tiles.txt" ]
+then
+  echo "However, some tile downloads failed. You can try again later, as all successfully downloaded tiles were saved to '$TMPDIR'" >&2
+else
+  rm -rf "$TMPDIR"
+fi
