@@ -36,12 +36,20 @@ chmod +x dezoom.sh
 ```
 
 ### Download your image
-Use the script like that: `./dezoom.sh width height URL`
+Use the script like that: `./dezoom.sh template_url`
 
-The first two parameters are the width and height (in number of tiles) of the image,
-the third is the URL of the image, with the x position replaced by `%X` and the Y position by `%Y`
+Where template_url is the URL of the image,
+with the x position replaced by `%X` and the Y position by `%Y`
 
-## Find the parameters to use
+## Advanced usage
+
+The script accepts additional parameters:
+ * `-x` : the first value to use for `%X` (default: 0)
+ * `-y` : the first value to use for `%Y`
+ * `-X` : the last value to use for `%X`
+ * `-Y` : the last value to use for `%Y`
+
+### Find the parameters to use
 
 You have to know the width and height (in tiles) in your image.
 One solution is to find it by trial and error.
