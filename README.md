@@ -73,5 +73,5 @@ For instance, if the first and last tiles loaded are:
 then you invoke the script like that:
 
 ```bash
-./dezoom.sh -x 0 -X 188 -y 0 -Y 105 "http://example.com/tile.php?tilePositionX=%X&tilePositionY=%Y"
+./dezoom.sh -x 0 -y 0 -X 188 -Y 105 "http://example.com/tile.php?tilePositionX=%X&tilePositionY=%Y"
 ```
