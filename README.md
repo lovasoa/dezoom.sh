@@ -56,13 +56,20 @@ The script will perform a binary search to find the last value of `%X`
 ### Find the parameters to use
 
 You have to know the width and height (in tiles) in your image.
-One solution is to find it by trial and error.
-Another is to open the zoomable image in your browser, open the network inspector of your browser,
-zoom and scroll to the bottom right of the image, and see what is the last loaded tile.
 
-For instance, if the last tile loaded is `http://example.com/tile.php?tilePositionX=188&tilePositionY=105`,
+One solution is to find it by trial and error.
+
+Another is to open the zoomable image in your browser,
+open the network inspector of your browser,
+zoom and scroll to the bottom right of the image,
+and see what are the first and the last loaded tile.
+
+For instance, if the first and last tiles loaded are:
+ * first: `http://example.com/tile.php?tilePositionX=0&tilePositionY=0`,
+ * last: `http://example.com/tile.php?tilePositionX=188&tilePositionY=105`,
+
 then you invoke the script like that:
 
 ```bash
-./dezoom.sh 188 105 "http://example.com/tile.php?tilePositionX=%X&tilePositionY=%Y"
+./dezoom.sh -x 0 -X 188 -y 0 -Y 105 "http://example.com/tile.php?tilePositionX=%X&tilePositionY=%Y"
 ```
