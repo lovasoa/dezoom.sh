@@ -159,14 +159,17 @@ then
 fi
 
 tilesize=$(head -n 1 "$TMPDIR/tilesize.txt")
-i=0
+i=1
 all_xy | while read xy; do
-  echo -ne "Assembling tiles: $((100 * i / total_tiles ))%   \r" >&2
+  echo -ne "Reading tiles: $((100 * i / total_tiles ))%   \r" >&2
   convert "$(tile_file $xy)" miff:- 2>/dev/null
   if [ $? != 0 ]
   then
     # If the image could not be read, then generate a black tile instead
     convert -size "$tilesize" xc:black miff:-
+  fi
+  if [[ $i = $total_tiles ]]; then
+    echo "Assembling tiles... (this can be long)" >&2
   fi
   let i=i+1
 done | montage - -geometry +0+0 -tile "$width_in_tiles"x"$height_in_tiles" result.jpg
