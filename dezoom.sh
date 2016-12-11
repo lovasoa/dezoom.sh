@@ -3,17 +3,20 @@
 
 export xmin=0
 export xmax="inf"
+export dx=1
 export ymin=0
 export ymax="inf"
+export dy=1
 export url_template=''
 export TMPDIR=''
 
 function show_usage {
-  echo "$0: invalid number of arguments
-
-  Usage: $0 [-x min_x] [-X max_x] [-y min_y] [-Y max_y] URL
-    {min|max}_{y|x}: number of the first and last tiles
-    URL: the URL of individual tiles, with the x position replaced by %X and the y position replaced by %Y" >&2
+  echo "
+Usage: $0 [-x min_x] [-X max_x] [-u delta_x] [-y min_y] [-Y max_y] [-v delta_y] TEMPLATE_URL
+  min_x, min_y: coordinates of the first tile (default: 0,0)
+  max_x, max_y: coordinates of the last tile (default: detect automatically)
+  delta_x, delta_y: increment in x and y between consecutive tiles (default: 1,1)
+  TEMPLATE_URL: the URL of individual tiles, with the x position replaced by %X and the y position replaced by %Y" >&2
   exit 1;
 }
 
@@ -64,8 +67,8 @@ function download_x { download_tile "$1" "$ymin" true; }
 function download_y { download_tile "$xmin" "$1" true; }
 
 function all_xy {
-  for y in $(seq $ymin $ymax); do
-    for x in $(seq $xmin $xmax); do
+  seq $ymin $dy $ymax | while read y; do
+    seq $xmin $dx $xmax | while read x; do
       echo $x $y
     done
   done
@@ -92,10 +95,20 @@ while getopts ":x:X:y:Y:" opt; do
     x) xmin=$OPTARG;;
     Y) ymax=$OPTARG;;
     y) ymin=$OPTARG;;
+    u) dx=$OPTARG;;
+    v) dy=$OPTARG;;
     \?) show_usage;;
   esac
 done
 shift $((OPTIND - 1)) 
+
+# Avoid infinite loops: if xmax is smaller than xmin, then dx should be negative
+if [[ $(( (xmax - xmin) / dx )) -lt 0 ]]; then
+  dx=$((-dx))
+fi
+if [[ $(( (ymax - ymin) / dy )) -lt 0 ]]; then
+  dy=$((-dy))
+fi
 
 url_template="$1"
 if [[ ! "$url_template" ]]; then
@@ -108,11 +121,11 @@ mkdir -p "$TMPDIR"
 
 if [[ "$xmax" = "inf" ]]; then
   echo "Guessing xmax..." >&2
-  xmax=$(dichotomic_search "$xmin" 1000 download_x)
+  xmax=$(dichotomic_search "$xmin" $((dx*1000)) download_x)
 fi
 if [[ "$ymax" = "inf" ]]; then
   echo "Guessing ymax..." >&2
-  ymax=$(dichotomic_search "$ymin" 1000 download_y)
+  ymax=$(dichotomic_search "$ymin" $((dy*1000)) download_y)
 fi
 
 assert_valid_integers $xmin $xmax $ymin $ymax
@@ -121,8 +134,8 @@ assert_valid_integers $xmin $xmax $ymin $ymax
 rm -f "$TMPDIR/failed_tiles.txt"
 
 #Count the total number of tiles (xmax may be smaller than xmin)
-width_in_tiles=$( echo "sqrt(($xmax - $xmin)^2) + 1" | bc)
-height_in_tiles=$( echo "sqrt(($ymax - $ymin)^2) + 1" | bc)
+width_in_tiles=$(( (xmax - xmin) / dx + 1))
+height_in_tiles=$(( (ymax - ymin) / dy + 1))
 total_tiles=$((width_in_tiles * height_in_tiles))
 
 i=1
