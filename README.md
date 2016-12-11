@@ -45,9 +45,13 @@ with the x position replaced by `%X` and the Y position by `%Y`
 
 The script accepts additional parameters:
  * `-x` : the first value to use for `%X` (default: 0)
- * `-y` : the first value to use for `%Y`
- * `-X` : the last value to use for `%X`
- * `-Y` : the last value to use for `%Y`
+ * `-y` : the first value to use for `%Y` (default: 0)
+ * `-X` : the last value to use for `%X` (default: detect automatically)
+ * `-Y` : the last value to use for `%Y` (default: detect automatically)
+
+If `-X` (respectively `-Y`) is not set, then its value will be detected automatically:
+The script will perform a binary search to find the last value of `%X`
+(respectively `%Y`) that returns a valid image.
 
 ### Find the parameters to use
 
