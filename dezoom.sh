@@ -7,15 +7,17 @@ export dx=1
 export ymin=0
 export ymax="inf"
 export dy=1
+export outfile='result.jpg'
 export url_template=''
 export TMPDIR=''
 
 function show_usage {
   echo "
-Usage: $0 [-x min_x] [-X max_x] [-u delta_x] [-y min_y] [-Y max_y] [-v delta_y] TEMPLATE_URL
+Usage: $0 [-x min_x] [-X max_x] [-u delta_x] [-y min_y] [-Y max_y] [-v delta_y] [-o outfile] TEMPLATE_URL
   min_x, min_y: coordinates of the first tile (default: 0,0)
   max_x, max_y: coordinates of the last tile (default: detect automatically)
   delta_x, delta_y: increment in x and y between consecutive tiles (default: 1,1)
+  outfile: name of the result file to create (default: result.jpg)
   TEMPLATE_URL: the URL of individual tiles, with the x position replaced by %X and the y position replaced by %Y" >&2
   exit 1;
 }
@@ -89,7 +91,7 @@ function dichotomic_search {
   echo $min
 }
 
-while getopts ":x:X:y:Y:" opt; do
+while getopts ":x:X:y:Y:o:" opt; do
   case "$opt" in
     X) xmax=$OPTARG;;
     x) xmin=$OPTARG;;
@@ -97,7 +99,15 @@ while getopts ":x:X:y:Y:" opt; do
     y) ymin=$OPTARG;;
     u) dx=$OPTARG;;
     v) dy=$OPTARG;;
-    \?) show_usage;;
+    o) outfile=$OPTARG;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      show_usage
+      ;;
+    :)
+      echo "Option -$OPTARG requires an argument" >&2
+      show_usage
+      ;;
   esac
 done
 shift $((OPTIND - 1)) 
@@ -172,9 +182,9 @@ all_xy | while read xy; do
     echo "Assembling tiles... (this can be long)" >&2
   fi
   let i=i+1
-done | montage - -geometry +0+0 -tile "$width_in_tiles"x"$height_in_tiles" result.jpg
+done | montage - -geometry +0+0 -tile "$width_in_tiles"x"$height_in_tiles" "$outfile"
 
-echo "Tiles successfully assembled in 'result.jpg'" >&2
+echo "Tiles successfully assembled in '$outfile'" >&2
 
 if [ -e "$TMPDIR/failed_tiles.txt" ]
 then
