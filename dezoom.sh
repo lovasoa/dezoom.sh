@@ -8,16 +8,18 @@ export ymin=0
 export ymax="inf"
 export dy=1
 export outfile='result.jpg'
+export retry_downloads=true
 export url_template=''
 export TMPDIR=''
 
 function show_usage {
   echo "
 Usage: $0 [-x min_x] [-X max_x] [-u delta_x] [-y min_y] [-Y max_y] [-v delta_y] [-o outfile] TEMPLATE_URL
-  min_x, min_y: coordinates of the first tile (default: 0,0)
-  max_x, max_y: coordinates of the last tile (default: detect automatically)
-  delta_x, delta_y: increment in x and y between consecutive tiles (default: 1,1)
-  outfile: name of the result file to create (default: result.jpg)
+  -x min_x, -y min_y: coordinates of the first tile (default: 0,0)
+  -X max_x, -Y max_y: coordinates of the last tile (default: detect automatically)
+  -u delta_x, -v delta_y: increment in x and y between consecutive tiles (default: 1,1)
+  -o outfile: name of the result file to create (default: result.jpg)
+  -f: Fast mode: don't retry downloads when they fail (default: false)
   TEMPLATE_URL: the URL of individual tiles, with the x position replaced by %X and the y position replaced by %Y" >&2
   exit 1;
 }
@@ -53,7 +55,7 @@ function download_tile {
   else
     rm -f "$outfile"
     echo "Failed to download '$url'" >&2
-    if [[ ! $retried ]]
+    if [[ ( ! $retried )  && ( $retry_downloads = true ) ]]
     then
       sleep 5
       download_tile $x $y true
@@ -65,8 +67,8 @@ function download_tile {
   fi
 }
 
-function download_x { download_tile "$1" "$ymin" true; }
-function download_y { download_tile "$xmin" "$1" true; }
+function download_x { download_tile "$1" "$ymin"; }
+function download_y { download_tile "$xmin" "$1"; }
 
 function all_xy {
   seq $ymin $dy $ymax | while read y; do
@@ -91,7 +93,7 @@ function dichotomic_search {
   echo $min
 }
 
-while getopts ":x:X:y:Y:o:" opt; do
+while getopts ":x:X:y:Y:o:f" opt; do
   case "$opt" in
     X) xmax=$OPTARG;;
     x) xmin=$OPTARG;;
@@ -100,6 +102,7 @@ while getopts ":x:X:y:Y:o:" opt; do
     u) dx=$OPTARG;;
     v) dy=$OPTARG;;
     o) outfile=$OPTARG;;
+    f) retry_downloads=false;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
       show_usage

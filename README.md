@@ -51,6 +51,7 @@ The script accepts additional parameters:
  * `-u` : the interval between two successive values of `%X` (default: 1 if xmax > xmin, -1 otherwise)
  * `-v` : the interval between two successive values of `%Y` (default: 1 if ymax > ymin, -1 otherwise)
  * `-o` : name of the output file. (default: result.jpg)
+ * `-f` : Fast mode: don't retry downloads when they fail (default: false)
 
 If `-X` (respectively `-Y`) is not set, then its value will be detected automatically:
 The script will perform a binary search to find the last value of `%X`
