@@ -18,8 +18,17 @@ brew install imagemagick
 brew install wget
 ```
 #### In windows
-Install [cygwin](https://cygwin.com/install.html), and inside it, install wget and [imagemagick](http://www.imagemagick.org/script/binary-releases.php).
-
+* Install [cygwin](https://cygwin.com/install.html), and inside it, install wget and [imagemagick](http://www.imagemagick.org/script/binary-releases.php).
+* Download and install the setup of 32-bit or 64-bit version of `cygwin`. Follow the on-screen instructions for installation.
+* When asked to "Selcet packages to install", do select `wget` and `imagemagick` (check the screenshots for reference).
+* Select Packages
+![Screenshot](https://cloud.githubusercontent.com/assets/586934/21268157/93eab9f2-c3d3-11e6-9dc5-df355a68ef80.PNG)
+* Search `wget` package
+![Screenshot](https://cloud.githubusercontent.com/assets/586934/21268159/941ea3de-c3d3-11e6-8c76-8a2f6fc59685.PNG)
+* Select `wget` package to install
+![Screenshot](https://cloud.githubusercontent.com/assets/586934/21268158/941d3972-c3d3-11e6-9953-ff3c9106a354.PNG)
+* Similarly search and select `imagemagick` pacakage to install
+![Screenshot](https://cloud.githubusercontent.com/assets/586934/21268162/944f0416-c3d3-11e6-9345-6e011ca9725d.PNG)
 
 ### Download the script
 You can use wget to download the script itself from the command-line:
@@ -77,3 +86,18 @@ then you invoke the script like that:
 ```bash
 ./dezoom.sh -x 0 -y 0 -X 188 -Y 105 "http://example.com/tile.php?tilePositionX=%X&tilePositionY=%Y"
 ```
+
+### Screenshot
+![Screenshot](https://cloud.githubusercontent.com/assets/586934/21268161/944d4eb4-c3d3-11e6-8759-e203293d1d6f.PNG)
+
+### Troubleshoots
+* If using proxy, run the following command before using the script -
+```bash
+export http_proxy=http://username:password@host:port/
+```
+
+* Stuck on "Assembling tiles..." : Assembling tiles take time proportional to total number of tiles downloaded. Have patience, script is working in the background. Tested e.g. (final image info) -
+ - Dimensions : 46,927 x 34,348
+ - Size : 315 MB
+ - MaxX = 183, MaxY=134
+ - Time taken : 5 hours
