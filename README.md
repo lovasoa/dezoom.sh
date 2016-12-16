@@ -18,7 +18,7 @@ brew install imagemagick
 brew install wget
 ```
 #### In windows
-Install [cygwin](https://cygwin.com/install.html), and inside it, install wget and [imagemagick](http://www.imagemagick.org/script/binary-releases.php). For detailed instructions, read [wiki](https://github.com/lovasoa/dezoom.sh/wiki/Installation-on-Windows).
+Install [cygwin](https://cygwin.com/install.html), and inside it, install wget and [imagemagick](http://www.imagemagick.org/script/binary-releases.php). For detailed instructions, read [this wiki page](https://github.com/lovasoa/dezoom.sh/wiki/Installation-on-Windows).
 
 
 ### Download the script
