@@ -93,7 +93,7 @@ function dichotomic_search {
   echo $min
 }
 
-while getopts ":x:X:y:Y:o:f" opt; do
+while getopts ":x:X:y:Y:u:v:o:f" opt; do
   case "$opt" in
     X) xmax=$OPTARG;;
     x) xmin=$OPTARG;;
