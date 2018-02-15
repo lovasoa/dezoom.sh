@@ -20,6 +20,7 @@ brew install wget
 #### In windows
 Install [cygwin](https://cygwin.com/install.html), and inside it, install wget and [imagemagick](http://www.imagemagick.org/script/binary-releases.php). For detailed instructions, read [this wiki page](https://github.com/lovasoa/dezoom.sh/wiki/Installation-on-Windows).
 
+Alternatively, you can install the [Windows Subsystem for Linux](https://en.wikipedia.org/wiki/Windows_Subsystem_for_Linux) ([instructions](https://docs.microsoft.com/en-us/windows/wsl/install-win10)), and follow the linux instructions above.
 
 ### Download the script
 You can use wget to download the script itself from the command-line:
