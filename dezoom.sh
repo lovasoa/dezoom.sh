@@ -10,15 +10,17 @@ export dy=1
 export outfile='result.jpg'
 export retry_downloads=true
 export url_template=''
+export wget_params=''
 export TMPDIR=''
 
 function show_usage {
   echo "
-Usage: $0 [-x min_x] [-X max_x] [-u delta_x] [-y min_y] [-Y max_y] [-v delta_y] [-o outfile] TEMPLATE_URL
+Usage: $0 [-x min_x] [-X max_x] [-u delta_x] [-y min_y] [-Y max_y] [-v delta_y] [-o outfile] [-p wget_params] TEMPLATE_URL
   -x min_x, -y min_y: coordinates of the first tile (default: 0,0)
   -X max_x, -Y max_y: coordinates of the last tile (default: detect automatically)
   -u delta_x, -v delta_y: increment in x and y between consecutive tiles (default: 1,1)
   -o outfile: name of the result file to create (default: result.jpg)
+  -p wget_params: additional parameters to pass to wget while downloading tiles (default: None)
   -f: Fast mode: don't retry downloads when they fail (default: false)
   TEMPLATE_URL: the URL of individual tiles, with the x position replaced by %X and the y position replaced by %Y" >&2
   exit 1;
@@ -45,7 +47,7 @@ function download_tile {
   outfile=$(tile_file $x $y)
 
   if [[ ! -e "$outfile" ]]; then
-    wget --timeout 20 -O "$outfile" "$url" 2>/dev/null
+    wget --timeout 20 -O "$outfile" $wget_params "$url" 2>/dev/null
   fi
 
   tilesize=$(identify -format "%wx%h" "$outfile" 2> /dev/null)
@@ -93,7 +95,7 @@ function dichotomic_search {
   echo $min
 }
 
-while getopts ":x:X:y:Y:u:v:o:f" opt; do
+while getopts ":x:X:y:Y:u:v:o:p:f" opt; do
   case "$opt" in
     X) xmax=$OPTARG;;
     x) xmin=$OPTARG;;
@@ -102,6 +104,7 @@ while getopts ":x:X:y:Y:u:v:o:f" opt; do
     u) dx=$OPTARG;;
     v) dy=$OPTARG;;
     o) outfile=$OPTARG;;
+    p) wget_params=$OPTARG;;
     f) retry_downloads=false;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
