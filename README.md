@@ -1,4 +1,9 @@
 # dezoom.sh
+
+> **Important note** : dezoom.sh has been superseded by [dezoomify-rs](https://github.com/lovasoa/dezoomify-rs).
+> **Dezoomify-rs** is easier to install, runs faster, and supports more zoomable image formats than dezoom.sh.
+> If you encounter anything you could do with dezoom.sh and can't do with dezoomify-rs, please [report it](https://github.com/lovasoa/dezoomify-rs/issues) as a bug.
+
 Download and assemble tiled images. Dezoomify for bash. Depends on imagemagick
 
 
